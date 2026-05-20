@@ -29,8 +29,9 @@ object FieldReflectionEngine {
     /**
      * Caches reflection metadata for performance optimization.
      * Key: Class name, Value: Map of field names to property accessors
+     * Thread-safe using ConcurrentHashMap for concurrent access.
      */
-    private val reflectionCache = mutableMapOf<String, Map<String, kotlin.reflect.KProperty1<Any, *>>>()
+    private val reflectionCache = java.util.concurrent.ConcurrentHashMap<String, Map<String, kotlin.reflect.KProperty1<Any, *>>>()
 
     /**
      * Extracts field value with caching for improved performance.
