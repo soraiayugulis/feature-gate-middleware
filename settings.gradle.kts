@@ -8,9 +8,3 @@ pluginManagement {
         mavenCentral()
     }
 }
-
-dependencyResolutionManagement {
-    repositories {
-        mavenCentral()
-    }
-}
