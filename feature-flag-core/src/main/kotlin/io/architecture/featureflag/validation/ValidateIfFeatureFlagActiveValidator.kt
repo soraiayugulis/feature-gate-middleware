@@ -12,8 +12,12 @@ class ValidateIfFeatureFlagActiveValidator(
     private val featureFlagClient: FeatureFlagClient
 ) : ConstraintValidator<ValidateIfFeatureFlagActive, Any> {
 
+    private lateinit var flagKey: String
+    private lateinit var contextIdField: String
+
     override fun initialize(constraintAnnotation: ValidateIfFeatureFlagActive) {
-        // Initialization if needed
+        this.flagKey = constraintAnnotation.flagKey
+        this.contextIdField = constraintAnnotation.contextIdField
     }
 
     override fun isValid(value: Any?, context: ConstraintValidatorContext): Boolean {
@@ -23,11 +27,15 @@ class ValidateIfFeatureFlagActiveValidator(
             return true
         }
 
-        // TODO: Implement reflection-based extraction of contextIdField from parent DTO
-        // TODO: Call featureFlagClient.isActive() to check flag status
-        // TODO: If flag is active, field is valid; if inactive, field should be null
+        // TODO: Access root bean to extract contextIdField value
+        // This requires Hibernate Validator specific API or cross-field validation approach
+        // For now, placeholder implementation
+        
+        // Check if feature flag is active (using empty attributes for now)
+        val isFlagActive = featureFlagClient.isActive(flagKey, "anonymous")
 
-        // Placeholder implementation - always valid for now
-        return true
+        // If flag is active, the field value is valid
+        // If flag is inactive and field has value, it's invalid
+        return isFlagActive
     }
 }
