@@ -4,7 +4,6 @@ import com.configcat.ConfigCatClient
 import com.configcat.User
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.slot
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
