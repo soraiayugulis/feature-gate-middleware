@@ -23,7 +23,7 @@ import kotlin.reflect.KClass
  */
 @Target(AnnotationTarget.FIELD)
 @Retention(AnnotationRetention.RUNTIME)
-@Constraint(validatedBy = [ValidateFeatureFlagByWaveValidator::class])
+@Constraint(validatedBy = arrayOf(ValidateFeatureFlagByWaveValidator::class))
 annotation class ValidateFeatureFlagByWave(
     /**
      * The feature flag key for the canary/percentage rollout.
