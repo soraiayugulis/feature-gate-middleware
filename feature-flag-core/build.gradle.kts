@@ -1,6 +1,7 @@
 dependencies {
     implementation("org.springframework:spring-context:6.1.6")
     implementation("org.springframework:spring-aop:6.1.6")
+    implementation("org.aspectj:aspectjweaver:1.9.21")
     implementation("jakarta.validation:jakarta.validation-api:3.0.2")
 
     implementation("com.configcat:configcat-java-client:9.0.0")
