@@ -51,4 +51,4 @@ jobs:
       uses: gradle/gradle-build-action@v3
 
     - name: Run Kotlin Linter (Detekt)
-      run: ./gradlew detekt --no-daemon || true
+      run: ./gradlew detekt --no-daemon
