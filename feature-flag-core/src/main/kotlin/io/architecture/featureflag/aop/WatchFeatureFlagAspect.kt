@@ -41,15 +41,13 @@ class WatchFeatureFlagAspect(
         val isFlagActive = featureFlagClient.isActive(flagKey, "anonymous")
         MDC.put("ff_result", isFlagActive.toString())
 
-        logger.info("Method entry - feature flag evaluated")
-
         return try {
             // Execute the actual method
             val result = joinPoint.proceed()
-            logger.info("Method exit - execution completed")
+            logger.info("Feature Flag method execution completed")
             result
         } catch (e: Throwable) {
-            logger.error("Method exit - exception thrown: ${e.message}")
+            logger.error("Feature Flag method execution failed: ${e.message}")
             throw e
         } finally {
             // Clean MDC to prevent thread contamination
