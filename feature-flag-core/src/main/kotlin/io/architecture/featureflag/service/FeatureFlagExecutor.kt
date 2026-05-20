@@ -9,11 +9,24 @@ import org.springframework.stereotype.Component
  * Executor component for feature flag conditional execution.
  * Provides a DSL-style API for executing code based on feature flag state.
  *
+ * Handlers are optional - if not defined, null is returned for that branch.
+ *
  * Example usage:
  * ```kotlin
+ * // Both handlers defined
  * featureFlagExecutor.execute("novo-checkout-flow", userId) {
  *     onActive { processNewCheckout(order) }
  *     onDisable { processLegacyCheckout(order) }
+ * }
+ *
+ * // Only active handler (returns null when disabled)
+ * featureFlagExecutor.execute<String?>("beta-feature", userId) {
+ *     onActive { "beta-result" }
+ * }
+ *
+ * // Only disable handler (returns null when active)
+ * featureFlagExecutor.execute<String?>("legacy-mode", userId) {
+ *     onDisable { "legacy-result" }
  * }
  * ```
  */
@@ -77,19 +90,19 @@ class FeatureFlagExecutor(
         }
 
         /**
-         * Executes the onActive block or throws if not defined.
+         * Executes the onActive block or returns null if not defined.
          */
+        @Suppress("UNCHECKED_CAST")
         fun executeOnActive(): T {
-            return onActive?.invoke()
-                ?: throw IllegalStateException("onActive handler not defined")
+            return onActive?.invoke() ?: null as T
         }
 
         /**
          * Executes the onDisable block or returns null if not defined.
          */
+        @Suppress("UNCHECKED_CAST")
         fun executeOnDisable(): T {
-            return onDisable?.invoke()
-                ?: throw IllegalStateException("onDisable handler not defined")
+            return onDisable?.invoke() ?: null as T
         }
     }
 }

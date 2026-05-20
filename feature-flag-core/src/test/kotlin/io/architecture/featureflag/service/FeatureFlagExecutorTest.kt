@@ -80,29 +80,59 @@ class FeatureFlagExecutorTest {
     }
 
     @Test
-    fun `execute should throw when onActive is not defined and flag is active`() {
+    fun `execute should return null when onActive is not defined and flag is active`() {
         // Given
         every { featureFlagClient.isActive("test-flag", "user-123") } returns true
 
-        // When / Then
-        assertThrows<IllegalStateException> {
-            executor.execute<String>("test-flag", "user-123") {
-                onDisable { "disable-result" }
-            }
+        // When
+        val result = executor.execute<String?>("test-flag", "user-123") {
+            onDisable { "disable-result" }
         }
+
+        // Then
+        assert(result == null)
     }
 
     @Test
-    fun `execute should throw when onDisable is not defined and flag is inactive`() {
+    fun `execute should return null when onDisable is not defined and flag is inactive`() {
         // Given
         every { featureFlagClient.isActive("test-flag", "user-123") } returns false
 
-        // When / Then
-        assertThrows<IllegalStateException> {
-            executor.execute<String>("test-flag", "user-123") {
-                onActive { "active-result" }
-            }
+        // When
+        val result = executor.execute<String?>("test-flag", "user-123") {
+            onActive { "active-result" }
         }
+
+        // Then
+        assert(result == null)
+    }
+
+    @Test
+    fun `execute should allow only onActive handler`() {
+        // Given
+        every { featureFlagClient.isActive("test-flag", "user-123") } returns true
+
+        // When
+        val result = executor.execute<String?>("test-flag", "user-123") {
+            onActive { "active-result" }
+        }
+
+        // Then
+        assert(result == "active-result")
+    }
+
+    @Test
+    fun `execute should allow only onDisable handler`() {
+        // Given
+        every { featureFlagClient.isActive("test-flag", "user-123") } returns false
+
+        // When
+        val result = executor.execute<String?>("test-flag", "user-123") {
+            onDisable { "disable-result" }
+        }
+
+        // Then
+        assert(result == "disable-result")
     }
 
 }
