@@ -3,6 +3,8 @@ package io.architecture.featureflag.validation
 import io.architecture.featureflag.core.FeatureFlagClient
 import jakarta.validation.ConstraintValidator
 import jakarta.validation.ConstraintValidatorContext
+import org.slf4j.LoggerFactory
+import org.slf4j.MDC
 
 /**
  * Validator for the @ValidateFeatureFlagByWave constraint.
@@ -11,6 +13,10 @@ import jakarta.validation.ConstraintValidatorContext
 class ValidateFeatureFlagByWaveValidator(
     private val featureFlagClient: FeatureFlagClient
 ) : ConstraintValidator<ValidateFeatureFlagByWave, Any> {
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(ValidateFeatureFlagByWaveValidator::class.java)
+    }
 
     private lateinit var flagKey: String
     private lateinit var contextIdField: String
@@ -26,14 +32,29 @@ class ValidateFeatureFlagByWaveValidator(
             return true
         }
 
-        // TODO: Access root bean to extract contextIdField value for wave evaluation
-        // For now, placeholder implementation using anonymous user
+        // Set MDC context for structured logging
+        MDC.put("ff_key", flagKey)
+        MDC.put("ff_mechanism", "ValidateFeatureFlagByWave")
 
-        // The ConfigCat SDK handles percentage rollout automatically based on userId
-        val isInActiveWave = featureFlagClient.isActive(flagKey, "anonymous")
+        return try {
+            // TODO: Access root bean to extract contextIdField value for wave evaluation
+            val userId = "anonymous"
+            MDC.put("ff_context_id", userId)
 
-        // If user is in active wave, field is valid
-        // If user is not in active wave and field has value, it's invalid
-        return isInActiveWave
+            // The ConfigCat SDK handles percentage rollout automatically based on userId
+            val isInActiveWave = featureFlagClient.isActive(flagKey, userId)
+            MDC.put("ff_result", isInActiveWave.toString())
+
+            logger.info("Feature Flag evaluated for canary/wave validation")
+
+            // If user is in active wave, field is valid
+            isInActiveWave
+        } finally {
+            // Clean MDC to prevent thread contamination
+            MDC.remove("ff_key")
+            MDC.remove("ff_context_id")
+            MDC.remove("ff_result")
+            MDC.remove("ff_mechanism")
+        }
     }
 }
