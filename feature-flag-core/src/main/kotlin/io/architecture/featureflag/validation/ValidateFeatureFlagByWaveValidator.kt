@@ -37,8 +37,13 @@ class ValidateFeatureFlagByWaveValidator(
         MDC.put("ff_mechanism", "ValidateFeatureFlagByWave")
 
         return try {
-            // TODO: Access root bean to extract contextIdField value for wave evaluation
-            val userId = "anonymous"
+            // Extract userId from root bean using contextIdField
+            val rootBean = ValidationContextHolder.get()
+            val userId = if (rootBean != null) {
+                FieldReflectionEngine.extractFieldValueCached(rootBean, contextIdField) ?: "anonymous"
+            } else {
+                "anonymous"
+            }
             MDC.put("ff_context_id", userId)
 
             // The ConfigCat SDK handles percentage rollout automatically based on userId

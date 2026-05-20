@@ -38,8 +38,13 @@ class ValidateIfFeatureFlagActiveValidator(
         MDC.put("ff_mechanism", "ValidateIfFeatureFlagActive")
 
         return try {
-            // TODO: Access root bean to extract contextIdField value
-            val userId = "anonymous"
+            // Extract userId from root bean using contextIdField
+            val rootBean = ValidationContextHolder.get()
+            val userId = if (rootBean != null) {
+                FieldReflectionEngine.extractFieldValueCached(rootBean, contextIdField) ?: "anonymous"
+            } else {
+                "anonymous"
+            }
             MDC.put("ff_context_id", userId)
 
             // Check if feature flag is active
