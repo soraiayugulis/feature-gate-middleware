@@ -2,9 +2,9 @@ package io.architecture.featureflag.provider
 
 import com.configcat.ConfigCatClient
 import com.configcat.User
+import io.architecture.featureflag.core.FeatureFlagContext
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.slot
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -16,23 +16,20 @@ class ConfigCatFeatureFlagClientTest {
 
     @BeforeEach
     fun setUp() {
-        configCatClient = mockk()
+        configCatClient = mockk(relaxed = true)
         featureFlagClient = ConfigCatFeatureFlagClient(configCatClient)
     }
 
     @Test
     fun `isActive should return true when ConfigCat returns true`() {
         // Given
-        val flagKey = "test-flag"
-        val userId = "user-123"
-        val attributes = emptyMap<String, Any>()
-
-        every { 
-            configCatClient.getValue(Boolean::class.javaObjectType, flagKey, any<User>(), false) 
+        val context = FeatureFlagContext(identifier = "user-123")
+        every {
+            configCatClient.getValue(Boolean::class.javaObjectType, "test-flag", any<User>(), false)
         } returns true
 
         // When
-        val result = featureFlagClient.isActive(flagKey, userId, attributes)
+        val result = featureFlagClient.isActive("test-flag", context)
 
         // Then
         assertThat(result).isTrue()
@@ -41,16 +38,13 @@ class ConfigCatFeatureFlagClientTest {
     @Test
     fun `isActive should return false when ConfigCat returns false`() {
         // Given
-        val flagKey = "test-flag"
-        val userId = "user-123"
-        val attributes = emptyMap<String, Any>()
-
-        every { 
-            configCatClient.getValue(Boolean::class.javaObjectType, flagKey, any<User>(), false) 
+        val context = FeatureFlagContext(identifier = "user-123")
+        every {
+            configCatClient.getValue(Boolean::class.javaObjectType, "test-flag", any<User>(), false)
         } returns false
 
         // When
-        val result = featureFlagClient.isActive(flagKey, userId, attributes)
+        val result = featureFlagClient.isActive("test-flag", context)
 
         // Then
         assertThat(result).isFalse()
@@ -59,16 +53,17 @@ class ConfigCatFeatureFlagClientTest {
     @Test
     fun `isActive should pass user context to ConfigCat`() {
         // Given
-        val flagKey = "test-flag"
-        val userId = "user-456"
-        val attributes = mapOf("email" to "test@example.com", "plan" to "premium")
-
-        every { 
-            configCatClient.getValue(Boolean::class.javaObjectType, flagKey, any<User>(), false) 
+        val context = FeatureFlagContext(
+            identifier = "user-456",
+            email = "test@example.com",
+            custom = mapOf("plan" to "premium")
+        )
+        every {
+            configCatClient.getValue(Boolean::class.javaObjectType, "test-flag", any<User>(), false)
         } returns true
 
         // When
-        val result = featureFlagClient.isActive(flagKey, userId, attributes)
+        val result = featureFlagClient.isActive("test-flag", context)
 
         // Then
         assertThat(result).isTrue()

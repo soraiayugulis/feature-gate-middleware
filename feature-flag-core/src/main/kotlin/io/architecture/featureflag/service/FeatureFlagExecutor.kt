@@ -1,6 +1,7 @@
 package io.architecture.featureflag.service
 
 import io.architecture.featureflag.core.FeatureFlagClient
+import io.architecture.featureflag.core.FeatureFlagContext
 import io.architecture.featureflag.logging.FeatureFlagMdc
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
@@ -43,19 +44,20 @@ class FeatureFlagExecutor(
      * Executes code based on feature flag state.
      *
      * @param flagKey The feature flag key to evaluate
-     * @param userId The user identifier for flag evaluation
+     * @param context Optional targeting context. Pass null for global on/off flags.
      * @param block The execution block defining onActive and onDisable handlers
      * @return The result of the executed block
      */
     fun <T> execute(
         flagKey: String,
-        userId: String,
+        context: FeatureFlagContext? = null,
         block: ExecutionBlock<T>.() -> Unit
     ): T {
         val executionBlock = ExecutionBlock<T>().apply(block)
+        val contextId = context?.identifier ?: "global"
 
-        return FeatureFlagMdc.withContext(flagKey, "FeatureFlagExecutor", userId) {
-            val isActive = featureFlagClient.isActive(flagKey, userId)
+        return FeatureFlagMdc.withContext(flagKey, "FeatureFlagExecutor", contextId) {
+            val isActive = featureFlagClient.isActive(flagKey, context)
             FeatureFlagMdc.setResult(isActive)
 
             logger.info("FeatureFlagExecutor evaluated flag for user")

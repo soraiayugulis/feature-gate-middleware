@@ -42,7 +42,7 @@ class ValidateFeatureFlagByWaveValidator(
             MDC.put("ff_context_id", userId)
 
             // The ConfigCat SDK handles percentage rollout automatically based on userId
-            val isInActiveWave = featureFlagClient.isActive(flagKey, userId)
+            val isInActiveWave = featureFlagClient.isActive(flagKey, null)
             MDC.put("ff_result", isInActiveWave.toString())
 
             logger.info("Feature Flag evaluated for canary/wave validation")

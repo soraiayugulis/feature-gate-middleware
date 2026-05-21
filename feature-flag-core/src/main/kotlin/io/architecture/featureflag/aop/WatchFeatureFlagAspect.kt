@@ -37,8 +37,8 @@ class WatchFeatureFlagAspect(
         MDC.put("ff_mechanism", "WatchFeatureFlag")
         MDC.put("ff_method", "$className.$methodName")
 
-        // Evaluate feature flag (anonymous user for now)
-        val isFlagActive = featureFlagClient.isActive(flagKey, "anonymous")
+        // Evaluate feature flag with no user context — aspect has no request context at this level
+        val isFlagActive = featureFlagClient.isActive(flagKey, null)
         MDC.put("ff_result", isFlagActive.toString())
 
         logger.info("Method entry - feature flag evaluated")

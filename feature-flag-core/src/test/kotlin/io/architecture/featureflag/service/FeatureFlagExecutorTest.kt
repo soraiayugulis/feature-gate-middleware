@@ -1,6 +1,7 @@
 package io.architecture.featureflag.service
 
 import io.architecture.featureflag.core.FeatureFlagClient
+import io.architecture.featureflag.core.FeatureFlagContext
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -22,43 +23,46 @@ class FeatureFlagExecutorTest {
     @Test
     fun `execute should run onActive block when flag is active`() {
         // Given
-        every { featureFlagClient.isActive("test-flag", "user-123") } returns true
+        val context = FeatureFlagContext(identifier = "user-123")
+        every { featureFlagClient.isActive("test-flag", context) } returns true
 
         // When
-        val result = executor.execute("test-flag", "user-123") {
+        val result = executor.execute("test-flag", context) {
             onActive { "active-result" }
             onDisable { "disable-result" }
         }
 
         // Then
         assert(result == "active-result")
-        verify { featureFlagClient.isActive("test-flag", "user-123") }
+        verify { featureFlagClient.isActive("test-flag", context) }
     }
 
     @Test
     fun `execute should run onDisable block when flag is inactive`() {
         // Given
-        every { featureFlagClient.isActive("test-flag", "user-123") } returns false
+        val context = FeatureFlagContext(identifier = "user-123")
+        every { featureFlagClient.isActive("test-flag", context) } returns false
 
         // When
-        val result = executor.execute("test-flag", "user-123") {
+        val result = executor.execute("test-flag", context) {
             onActive { "active-result" }
             onDisable { "disable-result" }
         }
 
         // Then
         assert(result == "disable-result")
-        verify { featureFlagClient.isActive("test-flag", "user-123") }
+        verify { featureFlagClient.isActive("test-flag", context) }
     }
 
     @Test
     fun `execute should propagate exceptions from onActive block`() {
         // Given
-        every { featureFlagClient.isActive("test-flag", "user-123") } returns true
+        val context = FeatureFlagContext(identifier = "user-123")
+        every { featureFlagClient.isActive("test-flag", context) } returns true
 
         // When / Then
         assertThrows<RuntimeException> {
-            executor.execute("test-flag", "user-123") {
+            executor.execute("test-flag", context) {
                 onActive { throw RuntimeException("Active error") }
                 onDisable { "disable-result" }
             }
@@ -68,11 +72,12 @@ class FeatureFlagExecutorTest {
     @Test
     fun `execute should propagate exceptions from onDisable block`() {
         // Given
-        every { featureFlagClient.isActive("test-flag", "user-123") } returns false
+        val context = FeatureFlagContext(identifier = "user-123")
+        every { featureFlagClient.isActive("test-flag", context) } returns false
 
         // When / Then
         assertThrows<RuntimeException> {
-            executor.execute("test-flag", "user-123") {
+            executor.execute("test-flag", context) {
                 onActive { "active-result" }
                 onDisable { throw RuntimeException("Disable error") }
             }
@@ -82,10 +87,11 @@ class FeatureFlagExecutorTest {
     @Test
     fun `execute should return null when onActive is not defined and flag is active`() {
         // Given
-        every { featureFlagClient.isActive("test-flag", "user-123") } returns true
+        val context = FeatureFlagContext(identifier = "user-123")
+        every { featureFlagClient.isActive("test-flag", context) } returns true
 
         // When
-        val result = executor.execute<String?>("test-flag", "user-123") {
+        val result = executor.execute<String?>("test-flag", context) {
             onDisable { "disable-result" }
         }
 
@@ -96,10 +102,11 @@ class FeatureFlagExecutorTest {
     @Test
     fun `execute should return null when onDisable is not defined and flag is inactive`() {
         // Given
-        every { featureFlagClient.isActive("test-flag", "user-123") } returns false
+        val context = FeatureFlagContext(identifier = "user-123")
+        every { featureFlagClient.isActive("test-flag", context) } returns false
 
         // When
-        val result = executor.execute<String?>("test-flag", "user-123") {
+        val result = executor.execute<String?>("test-flag", context) {
             onActive { "active-result" }
         }
 
@@ -110,10 +117,11 @@ class FeatureFlagExecutorTest {
     @Test
     fun `execute should allow only onActive handler`() {
         // Given
-        every { featureFlagClient.isActive("test-flag", "user-123") } returns true
+        val context = FeatureFlagContext(identifier = "user-123")
+        every { featureFlagClient.isActive("test-flag", context) } returns true
 
         // When
-        val result = executor.execute<String?>("test-flag", "user-123") {
+        val result = executor.execute<String?>("test-flag", context) {
             onActive { "active-result" }
         }
 
@@ -124,10 +132,11 @@ class FeatureFlagExecutorTest {
     @Test
     fun `execute should allow only onDisable handler`() {
         // Given
-        every { featureFlagClient.isActive("test-flag", "user-123") } returns false
+        val context = FeatureFlagContext(identifier = "user-123")
+        every { featureFlagClient.isActive("test-flag", context) } returns false
 
         // When
-        val result = executor.execute<String?>("test-flag", "user-123") {
+        val result = executor.execute<String?>("test-flag", context) {
             onDisable { "disable-result" }
         }
 
