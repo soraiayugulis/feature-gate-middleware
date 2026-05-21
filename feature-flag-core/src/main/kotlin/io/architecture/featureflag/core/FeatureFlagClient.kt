@@ -8,12 +8,12 @@ package io.architecture.featureflag.core
 interface FeatureFlagClient {
 
     /**
-     * Evaluates if a feature flag is active for the given user context.
+     * Evaluates if a feature flag is active for the given context.
      *
      * @param flagKey The unique identifier of the feature flag
-     * @param userId The unique identifier of the user (used for targeting and percentage rollouts)
-     * @param attributes Optional map of custom attributes for targeting rules
-     * @return true if the flag is active for this user context, false otherwise
+     * @param context Optional targeting context (identifier, email, country, custom attributes).
+     *   Pass null for global on/off flags that require no per-user targeting.
+     * @return true if the flag is active for this context, false otherwise
      */
-    fun isActive(flagKey: String, userId: String, attributes: Map<String, Any> = emptyMap()): Boolean
+    fun isActive(flagKey: String, context: FeatureFlagContext?): Boolean
 }

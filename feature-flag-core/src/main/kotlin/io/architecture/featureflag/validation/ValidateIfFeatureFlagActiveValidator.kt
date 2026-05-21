@@ -43,7 +43,7 @@ class ValidateIfFeatureFlagActiveValidator(
             MDC.put("ff_context_id", userId)
 
             // Check if feature flag is active
-            val isFlagActive = featureFlagClient.isActive(flagKey, userId)
+            val isFlagActive = featureFlagClient.isActive(flagKey, null)
             MDC.put("ff_result", isFlagActive.toString())
 
             logger.info("Feature Flag evaluated for field validation")
