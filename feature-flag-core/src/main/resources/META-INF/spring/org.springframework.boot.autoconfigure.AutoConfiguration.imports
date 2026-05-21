@@ -1,1 +1,2 @@
 io.architecture.featureflag.config.FeatureGateAutoConfiguration
+io.architecture.featureflag.openapi.FeatureFlagOpenApiAutoConfiguration
