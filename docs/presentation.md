@@ -61,4 +61,6 @@ Spring Boot middleware for feature flags with typed context, AOP, metrics, and O
 ## Deliverables
 - 74 tests, 0 failures
 - Published to GitHub Packages (io.featuregate:feature-gate-middleware:0.1.0-SNAPSHOT)
-- Complete README with examples and known limitations
+
+## Trajectory
+The entire development trajectory, from the creation of the specification to the final implementation, is documented in the [Cascade Trajectory](spec-driven-development/feature-flag-cascade-trajectory.md) document.

@@ -4,9 +4,9 @@ A Spring Boot middleware library for feature flag evaluation with typed targetin
 
 ## Documentation
 
-- [Technical Presentation](docs/presentation.md) — Architecture, features, and development methodology
-- [Spec-Driven Development](docs/spec-driven-development/step2step.md) — Detailed specification and implementation phases
-- [Alternative Spec](docs/spec-driven-development/new-path.md) — Redefined scope and value proposition
+- [Presentation](docs/presentation.md) — Architecture, features, and development methodology
+- [Step by Step Spec-Driven Development](docs/spec-driven-development/step2step.md) — Detailed specification and implementation phases
+- [Project Specification](docs/spec-driven-development/new-path.md) — Defined scope and value proposition
 
 ## Quick Start
 
