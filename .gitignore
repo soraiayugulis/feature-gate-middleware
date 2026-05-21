@@ -59,7 +59,7 @@ application-local.properties
 
 # Implementation plan (internal use only)
 implementation-plan.md
-step2step.md
+/step2step.md
 
 # Environment variables
 .env
