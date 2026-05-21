@@ -1,6 +1,4 @@
-# Feature Gate Middleware
-
-by @_sysout
+# Library Feature Gate Middleware
 
 A Spring Boot middleware library for feature flag evaluation with typed targeting context, AOP instrumentation, metrics, and OpenAPI integration.
 
@@ -59,8 +57,7 @@ class CheckoutService(
         )
 
         return featureFlagExecutor.execute("checkout-v2", context) {
-            // This block runs if the flag is enabled
-            "checkout-v2"
+            "checkout-v2" // This block runs if the flag is enabled
         } ?: "checkout-v1" // Fallback when flag is disabled
     }
 }
@@ -83,7 +80,7 @@ class PaymentService {
 }
 ```
 
-### 3. Using @HiFeatureFlag (Startup Inventory)
+### 3. Using @HiFeatureFlag (If enabled in `application.yml`)
 
 ```kotlin
 @RestController
@@ -145,6 +142,16 @@ Example Swagger UI output:
 }
 ```
 
+## Development Methodology
+
+This project was built using **Spec-Driven Development (SDD)** with **AI-augmented development** practices:
+
+- **Spec-Driven Development**: All features were implemented following a detailed specification in `step2step.md`, with clear phases, tasks, and acceptance criteria
+- **TDD Discipline**: Test-Driven Development was strictly followed (RED → GREEN → REFACTOR) for all components
+- **AI-Augmented Development**: Development was augmented by AI assistance (Cascade) for code generation, refactoring, and test creation
+- **Phase-Based Delivery**: The project was delivered in incremental phases (Phase 1-8), each with its own feature set and pull request
+- **Global Rules**: Consistent adherence to global rules including TDD quality gates, Kotlin Spring Expert patterns, and Git workflow best practices
+
 ## Known Limitations
 
 ### 1. AOP Proxy Bypass
@@ -183,6 +190,8 @@ MDC (Mapped Diagnostic Context) is not propagated with virtual threads. If you u
 
 **Workaround**: Use structured logging with explicit context parameters instead of relying on MDC.
 
-## License
+---
+---
 
-Apache License 2.0
+by @_sysout
+
