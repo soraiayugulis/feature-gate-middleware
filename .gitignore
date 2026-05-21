@@ -74,3 +74,6 @@ step2step.md
 *.zip
 *.tar.gz
 *.rar
+
+# Windsurf IDE
+.windsurf/
