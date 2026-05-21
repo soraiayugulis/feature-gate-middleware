@@ -2,197 +2,70 @@
 
 A Spring Boot middleware library for feature flag evaluation with typed targeting context, AOP instrumentation, metrics, and OpenAPI integration.
 
-## Features
+## Documentation
 
-- **Typed Targeting Context**: Structured `FeatureFlagContext` with identifier, email, country, and custom attributes
-- **AOP Instrumentation**: `@WatchFeatureFlag` for automatic aspect-oriented metrics and logging
-- **Startup Inventory**: `@HiFeatureFlag` annotation with startup logging of all flag-gated methods
-- **Metrics Integration**: Micrometer Counters and Timers for flag evaluation metrics
-- **OpenAPI/Swagger**: Automatic documentation of flag-gated endpoints in Swagger UI
-- **Spring Boot Auto-Configuration**: Zero-configuration setup with conditional bean registration
-- **ConfigCat Integration**: Built-in ConfigCat SDK client (or provide custom `FeatureFlagClient`)
+- [Technical Presentation](docs/presentation.md) — Architecture, features, and development methodology
+- [Spec-Driven Development](docs/spec-driven-development/step2step.md) — Detailed specification and implementation phases
+- [Alternative Spec](docs/spec-driven-development/new-path.md) — Redefined scope and value proposition
 
-## Gradle Dependency
+## Quick Start
+
+### Gradle Dependency
 
 ```kotlin
 dependencies {
-    implementation("io.architecture:feature-flag-core:1.0.0")
+    implementation("io.featuregate:feature-gate-middleware:0.1.0-SNAPSHOT")
 }
 ```
 
-## Configuration
+### Configuration
 
 Add to your `application.yml`:
 
 ```yaml
 feature-gate:
-  # ConfigCat SDK configuration (required)
   configcat:
-    sdk-key: ${CONFIGCAT_SDK_KEY}  # Your ConfigCat SDK key
-
-  # WatchFeatureFlag aspect (optional, requires Micrometer)
+    sdk-key: ${CONFIGCAT_SDK_KEY}
   watch:
-    enabled: true  # Enable/disable @WatchFeatureFlag metrics
-
-  # HiFeatureFlag startup inventory (optional)
+    enabled: true
   hi:
-    enabled: true  # Enable/disable @HiFeatureFlag startup logging
+    enabled: true
 ```
 
-## Usage Examples
-
-### 1. Using FeatureFlagExecutor Directly
+### Basic Usage
 
 ```kotlin
-@Service
-class CheckoutService(
-    private val featureFlagExecutor: FeatureFlagExecutor
-) {
-    fun checkout(): String {
-        val context = FeatureFlagContext(
-            identifier = "user123",
-            email = "user@example.com",
-            country = "BR",
-            custom = mapOf("wave" to "early-adopter")
-        )
+// Direct execution
+featureFlagExecutor.execute("my-flag", context) {
+    // enabled path
+} ?: fallback()
 
-        return featureFlagExecutor.execute("checkout-v2", context) {
-            "checkout-v2" // This block runs if the flag is enabled
-        } ?: "checkout-v1" // Fallback when flag is disabled
-    }
-}
-```
-
-### 2. Using @WatchFeatureFlag (AOP)
-
-```kotlin
-@Service
-class PaymentService {
-
-    @WatchFeatureFlag(flagKeys = ["pix-routing"], description = "Pix payment routing")
-    fun processPayment(): PaymentResult {
-        // Automatically wrapped with metrics and logging
-        // Counter: feature.flag.evaluation.total{flag=pix-routing}
-        // Timer: feature.flag.evaluation.duration{flag=pix-routing}
-        // Error Counter: feature.flag.evaluation.errors{flag=pix-routing}
-        return PaymentResult.success()
-    }
-}
-```
-
-### 3. Using @HiFeatureFlag (If enabled in `application.yml`)
-
-```kotlin
-@RestController
-@RequestMapping("/api/v1")
-class ProductController {
-
-    @HiFeatureFlag(
-        flagKeys = ["new-product-catalog"],
-        description = "New product catalog UI"
-    )
-    @GetMapping("/products")
-    fun getProducts(): List<Product> {
-        // This method will be logged at startup:
-        // INFO - Feature Flag Inventory: [{"key":"new-product-catalog","description":"New product catalog UI","method":"ProductController.getProducts"}]
-        return productService.findAll()
-    }
-}
-```
-
-### 4. Custom FeatureFlagClient
-
-If you don't use ConfigCat, provide your own `FeatureFlagClient` bean:
-
-```kotlin
-@Configuration
-class FeatureFlagConfiguration {
-    @Bean
-    fun customFeatureFlagClient(): FeatureFlagClient {
-        return object : FeatureFlagClient {
-            override fun isActive(flagKey: String, context: FeatureFlagContext?): Boolean {
-                // Your custom flag evaluation logic
-                return true
-            }
-        }
-    }
-}
-```
-
-## OpenAPI/Swagger Integration
-
-When `feature-gate.hi.enabled=true` and SpringDoc OpenAPI is on the classpath, the library automatically enhances Swagger UI:
-
-- **Feature Flag Tag**: Endpoints with `@HiFeatureFlag` are tagged with "feature-flag"
-- **x-feature-flags Extension**: Each operation includes a list of flag keys and descriptions
-- **Description Suffix**: "⚑ This endpoint's behavior may vary based on active feature flags." is appended
-
-Example Swagger UI output:
-```json
-{
-  "operationId": "getProducts",
-  "tags": ["feature-flag", "products"],
-  "description": "Get all products ⚑ This endpoint's behavior may vary based on active feature flags.",
-  "x-feature-flags": [
-    {
-      "key": "new-product-catalog",
-      "description": "New product catalog UI"
-    }
-  ]
-}
-```
-
-## Development Methodology
-
-This project was built using **Spec-Driven Development (SDD)** with **AI-augmented development** practices:
-
-- **Spec-Driven Development**: All features were implemented following a detailed specification in `step2step.md`, with clear phases, tasks, and acceptance criteria
-- **TDD Discipline**: Test-Driven Development was strictly followed (RED → GREEN → REFACTOR) for all components
-- **AI-Augmented Development**: Development was augmented by AI assistance (Cascade) for code generation, refactoring, and test creation
-- **Phase-Based Delivery**: The project was delivered in incremental phases (Phase 1-8), each with its own feature set and pull request
-- **Global Rules**: Consistent adherence to global rules including TDD quality gates, Kotlin Spring Expert patterns, and Git workflow best practices
-- **AI Integration**: Utilized specific rules, skills and workflows in Windsurf IDE
-
-## Known Limitations
-
-### 1. AOP Proxy Bypass
-Internal method calls within the same class bypass Spring AOP proxies. This means `@WatchFeatureFlag` and `@HiFeatureFlag` annotations will not trigger when methods are called internally:
-
-```kotlin
-@Service
-class MyService {
-    @WatchFeatureFlag(flagKeys = ["my-flag"], description = "My feature")
-    fun publicMethod() {
-        // Metrics will be recorded when called externally
-    }
-
-    fun callingMethod() {
-        publicMethod() // ⚠️ Metrics will NOT be recorded - AOP bypass
-    }
-}
-```
-
-**Workaround**: Call the method via `self` proxy injected by `@Autowired`.
-
-### 2. suspend fun on @WatchFeatureFlag
-The `@WatchFeatureFlag` aspect does not support `suspend` functions. Using it on suspend functions will trigger a startup validation warning:
-
-```kotlin
+// AOP instrumentation
 @WatchFeatureFlag(flagKeys = ["my-flag"], description = "My feature")
-suspend fun mySuspendFunction() { // ⚠️ Not supported - metrics will not be recorded
-    // ...
+fun myMethod() {
+    // automatically instrumented with metrics
+}
+
+// Startup inventory
+@HiFeatureFlag(flagKeys = ["my-flag"], description = "My feature")
+fun myEndpoint() {
+    // logged at startup
 }
 ```
 
-**Workaround**: Use `FeatureFlagExecutor` directly within suspend functions.
+## Features
 
-### 3. MDC + Virtual Threads
-MDC (Mapped Diagnostic Context) is not propagated with virtual threads. If you use virtual threads, MDC context set in the aspect will not be visible in downstream code.
+- Typed targeting context with identifier, email, country, custom attributes
+- `@WatchFeatureFlag` for automatic Micrometer metrics
+- `@HiFeatureFlag` for startup flag inventory
+- OpenAPI/Swagger integration for flag-gated endpoints
+- Spring Boot auto-configuration with conditional bean registration
+- ConfigCat SDK integration (or custom `FeatureFlagClient`)
 
-**Workaround**: Use structured logging with explicit context parameters instead of relying on MDC.
+## Development
 
----
+Built with Spec-Driven Development (SDD) and AI-augmented practices. See [Technical Presentation](docs/presentation.md) for methodology details.
+
 ---
 
 by @_sysout
-
