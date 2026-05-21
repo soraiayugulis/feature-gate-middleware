@@ -15,6 +15,8 @@ dependencies {
     testImplementation("org.assertj:assertj-core:3.25.3")
     testImplementation("io.mockk:mockk:1.13.10")
     testImplementation("org.springframework.boot:spring-boot:3.2.5")
+    testImplementation("org.springframework.boot:spring-boot-test:3.2.5")
+    testImplementation("org.springframework.boot:spring-boot-autoconfigure:3.2.5")
 }
 
 publishing {
