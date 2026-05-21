@@ -10,6 +10,7 @@ dependencies {
 
     compileOnly("org.springframework.boot:spring-boot:3.2.5")
     compileOnly("org.springframework.boot:spring-boot-autoconfigure:3.2.5")
+    compileOnly("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0")
 
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
     testImplementation("org.assertj:assertj-core:3.25.3")
@@ -17,6 +18,7 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot:3.2.5")
     testImplementation("org.springframework.boot:spring-boot-test:3.2.5")
     testImplementation("org.springframework.boot:spring-boot-autoconfigure:3.2.5")
+    testImplementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0")
 }
 
 publishing {
