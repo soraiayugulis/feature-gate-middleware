@@ -35,10 +35,8 @@ publishing {
             from(components["java"])
             artifactId = "feature-gate-middleware"
             
-            // Generate sources JAR
+            // Generate sources and Javadoc JARs using standard Java plugin methods
             artifact(tasks.named("sourcesJar"))
-            
-            // Generate Javadoc JAR
             artifact(tasks.named("javadocJar"))
             
             // POM metadata
@@ -82,15 +80,8 @@ publishing {
     }
 }
 
-// Tasks for sources and Javadoc
-tasks.register<Jar>("sourcesJar") {
-    dependsOn(tasks.classes)
-    archiveClassifier.set("sources")
-    from(sourceSets.main.get().allSource)
-}
-
-tasks.register<Jar>("javadocJar") {
-    dependsOn(tasks.javadoc)
-    archiveClassifier.set("javadoc")
-    from(tasks.javadoc.get().destinationDir)
+// Configure Java plugin to generate sources and Javadoc JARs
+java {
+    withSourcesJar()
+    withJavadocJar()
 }
