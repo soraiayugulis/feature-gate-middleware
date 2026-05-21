@@ -151,6 +151,7 @@ This project was built using **Spec-Driven Development (SDD)** with **AI-augment
 - **AI-Augmented Development**: Development was augmented by AI assistance (Cascade) for code generation, refactoring, and test creation
 - **Phase-Based Delivery**: The project was delivered in incremental phases (Phase 1-8), each with its own feature set and pull request
 - **Global Rules**: Consistent adherence to global rules including TDD quality gates, Kotlin Spring Expert patterns, and Git workflow best practices
+- **AI Integration**: Utilized specific rules, skills and workflows in Windsurf IDE
 
 ## Known Limitations
 
