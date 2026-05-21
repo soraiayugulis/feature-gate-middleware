@@ -1,16 +1,23 @@
-# Library Feature Gate Middleware
+# 🚀 Library Feature Gate Middleware
 
 A Spring Boot middleware library for feature flag evaluation with typed targeting context, AOP instrumentation, metrics, and OpenAPI integration.
 
-## Documentation
+## 📚 Documentation
 
-- [Presentation](docs/presentation.md) — Architecture, features, and development methodology
-- [Step by Step Spec-Driven Development](docs/spec-driven-development/step2step.md) — Detailed specification and implementation phases
-- [Project Specification](docs/spec-driven-development/new-path.md) — Defined scope and value proposition
+- [📊 Presentation](docs/presentation.md) — Architecture, features, and development methodology
+- [📝 Step by Step Spec-Driven Development](docs/spec-driven-development/step2step.md) — Detailed specification and implementation phases
+- [🎯 Project Specification](docs/spec-driven-development/new-path.md) — Defined scope and value proposition
 
-## Quick Start
+## 🛠 Tech Stack
+- ☕ Kotlin, Spring Boot 3.2.5, Gradle 8.5 (Kotlin DSL)
+- ⚙️ ConfigCat SDK 9.0.0, Micrometer 1.12.5
+- 📖 SpringDoc OpenAPI 2.3.0, AspectJ 1.9.21
+- 🧪 Testcontainers for integration tests
+- 📦 GitHub Packages for publishing
 
-### Gradle Dependency
+## ⚡ Quick Start
+
+### 📦 Gradle Dependency
 
 ```kotlin
 dependencies {
@@ -18,7 +25,7 @@ dependencies {
 }
 ```
 
-### Configuration
+### ⚙️ Configuration
 
 Add to your `application.yml`:
 
@@ -32,7 +39,7 @@ feature-gate:
     enabled: true
 ```
 
-### Basic Usage
+### 💻 Basic Usage
 
 ```kotlin
 // Direct execution
@@ -53,16 +60,16 @@ fun myEndpoint() {
 }
 ```
 
-## Features
+## ✨ Features
 
-- Typed targeting context with identifier, email, country, custom attributes
-- `@WatchFeatureFlag` for automatic Micrometer metrics
-- `@HiFeatureFlag` for startup flag inventory
-- OpenAPI/Swagger integration for flag-gated endpoints
-- Spring Boot auto-configuration with conditional bean registration
-- ConfigCat SDK integration (or custom `FeatureFlagClient`)
+- 🎯 Typed targeting context with identifier, email, country, custom attributes
+- 📊 `@WatchFeatureFlag` for automatic Micrometer metrics
+- 📋 `@HiFeatureFlag` for startup flag inventory
+- 🔌 OpenAPI/Swagger integration for flag-gated endpoints
+- 🚀 Spring Boot auto-configuration with conditional bean registration
+- 🔧 ConfigCat SDK integration (or custom `FeatureFlagClient`)
 
-## Development
+## 🏗 Development
 
 Built with Spec-Driven Development (SDD) and AI-augmented practices. See [Technical Presentation](docs/presentation.md) for methodology details.
 
