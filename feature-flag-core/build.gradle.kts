@@ -6,8 +6,10 @@ dependencies {
     implementation("org.slf4j:slf4j-api:2.0.13")
 
     implementation("com.configcat:configcat-java-client:9.0.0")
+    implementation("io.micrometer:micrometer-core:1.12.5")
 
     compileOnly("org.springframework.boot:spring-boot:3.2.5")
+    compileOnly("org.springframework.boot:spring-boot-autoconfigure:3.2.5")
 
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
     testImplementation("org.assertj:assertj-core:3.25.3")

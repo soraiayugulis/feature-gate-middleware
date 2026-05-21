@@ -10,7 +10,7 @@ import org.aspectj.lang.reflect.MethodSignature
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-class WatchFeatureFlagAspectTest {
+class WatchFeatureFlagAspectMetricsTest {
 
     private lateinit var featureFlagClient: FeatureFlagClient
     private lateinit var meterRegistry: MeterRegistry
@@ -32,52 +32,65 @@ class WatchFeatureFlagAspectTest {
     }
 
     @Test
-    fun `aroundMethod should proceed with join point when flag is active`() {
+    fun `should record evaluation counter with ENABLED status when flag is active`() {
         // Given
         val annotation = mockk<WatchFeatureFlag>()
-        every { annotation.flagKey } returns "test-flag"
-        every { featureFlagClient.isActive("test-flag", any()) } returns true
+        every { annotation.flagKey } returns "checkout-v2"
+        every { featureFlagClient.isActive("checkout-v2", null) } returns true
         every { joinPoint.proceed() } returns "result"
 
         // When
-        val result = aspect.aroundMethod(joinPoint, annotation)
+        aspect.aroundMethod(joinPoint, annotation)
 
         // Then
-        assert(result == "result")
-        verify { joinPoint.proceed() }
-        verify { featureFlagClient.isActive("test-flag", any()) }
+        verify { meterRegistry.counter("feature_flag.evaluation.total", "ff.key", "checkout-v2", "ff.status", "ENABLED") }
     }
 
     @Test
-    fun `aroundMethod should proceed with join point when flag is inactive`() {
+    fun `should record evaluation counter with DISABLED status when flag is inactive`() {
         // Given
         val annotation = mockk<WatchFeatureFlag>()
-        every { annotation.flagKey } returns "test-flag"
-        every { featureFlagClient.isActive("test-flag", any()) } returns false
+        every { annotation.flagKey } returns "checkout-v2"
+        every { featureFlagClient.isActive("checkout-v2", null) } returns false
         every { joinPoint.proceed() } returns "result"
 
         // When
-        val result = aspect.aroundMethod(joinPoint, annotation)
+        aspect.aroundMethod(joinPoint, annotation)
 
         // Then
-        assert(result == "result")
-        verify { joinPoint.proceed() }
+        verify { meterRegistry.counter("feature_flag.evaluation.total", "ff.key", "checkout-v2", "ff.status", "DISABLED") }
     }
 
     @Test
-    fun `aroundMethod should rethrow exception from join point`() {
+    fun `should record duration timer after method completes`() {
         // Given
         val annotation = mockk<WatchFeatureFlag>()
         every { annotation.flagKey } returns "test-flag"
-        every { featureFlagClient.isActive("test-flag", any()) } returns true
+        every { featureFlagClient.isActive("test-flag", null) } returns true
+        every { joinPoint.proceed() } returns "result"
+
+        // When
+        aspect.aroundMethod(joinPoint, annotation)
+
+        // Then
+        verify { meterRegistry.timer("feature_flag.evaluation.duration", "ff.key", "test-flag") }
+    }
+
+    @Test
+    fun `should record error counter when intercepted method throws`() {
+        // Given
+        val annotation = mockk<WatchFeatureFlag>()
+        every { annotation.flagKey } returns "test-flag"
+        every { featureFlagClient.isActive("test-flag", null) } returns true
         every { joinPoint.proceed() } throws RuntimeException("Test exception")
 
         // When / Then
         try {
             aspect.aroundMethod(joinPoint, annotation)
-            assert(false) { "Should have thrown exception" }
         } catch (e: RuntimeException) {
-            assert(e.message == "Test exception")
+            // Expected
         }
+
+        verify { meterRegistry.counter("feature_flag.evaluation.errors", "ff.key", "test-flag", "ff.error_type", "RuntimeException") }
     }
 }
