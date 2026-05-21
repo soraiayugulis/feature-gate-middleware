@@ -1,8 +1,7 @@
 # Feature Gate Middleware — New Path Spec
 
-> **Status**: REFINING — iterative collaboration in progress. No implementation until authorized.
+> **Status**: DONE — iterative collaboration in progress. No implementation until authorized.
 > **Branch**: `refactor` (from initial commit `6942a09`)
-> **Do not commit this document**
 
 
 ---

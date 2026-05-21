@@ -1,4 +1,4 @@
-# Feature Gate Middleware - Technical Presentation
+# Library Feature Gate Middleware
 
 ## What is it?
 Spring Boot middleware for feature flags with typed context, AOP, metrics, and OpenAPI.
@@ -23,6 +23,33 @@ Spring Boot middleware for feature flags with typed context, AOP, metrics, and O
 - AI-augmented development (Cascade/Windsurf)
 - 9 incremental phases, each with its own PR
 - Global rules: TDD quality gates, Kotlin Spring Expert patterns
+
+## Development Methodology (AI-Augmented)
+
+### Rules
+- **Global Rules**: Never commit directly to main, always create new branches from updated main
+- **Cascade Response Spec**: Mandatory header structure (Persona, Objective, Quality, Suggestions, Questions)
+- **Test-Drive Gate**: Strict TDD enforcement with JUnit 5/MockK, Arrange-Act-Assert pattern, Testcontainers for integration tests
+- **Kotlin Spring Expert**: Idiomatic Kotlin over Java-Style, constructor injection, null-safety, Kotlin DSL for Gradle
+
+### Skills
+- **kotlin-spring-dev**: Expert guidance for Spring applications in Kotlin
+- **tdd-expert**: Test-Driven Development discipline for new features and complex bug fixes
+
+### Workflows
+- **new-feature-sdd**: Implement features following Spec-Driven Development process
+- **prepare-pr**: Prepare pull request for review
+- **pr-create**: Create pull request for review
+- **pre-commit**: Prepare all commits to user review
+- **review**: Review code changes for bugs, security issues, and improvements
+
+### Persona
+- **Default**: Principal Software Engineer with AI-augmented development experience
+- Follows best practices, proposes effective solutions, focuses on quality, simplicity, and maintainability
+
+### Objectives
+- Every response includes: Persona, Objective, Quality assessment, Suggestions, Questions
+- Ensures structured, high-quality development with clear communication
 
 ## Tech Stack
 - Kotlin, Spring Boot 3.2.5, Gradle 8.5 (Kotlin DSL)
