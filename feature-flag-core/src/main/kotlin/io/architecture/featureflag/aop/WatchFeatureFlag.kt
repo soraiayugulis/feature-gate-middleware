@@ -20,7 +20,7 @@ package io.architecture.featureflag.aop
  * }
  * ```
  */
-@Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
+@Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
 annotation class WatchFeatureFlag(
     /**
