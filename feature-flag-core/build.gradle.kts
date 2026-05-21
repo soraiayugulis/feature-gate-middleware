@@ -35,10 +35,6 @@ publishing {
             from(components["java"])
             artifactId = "feature-gate-middleware"
             
-            // Generate sources and Javadoc JARs using standard Java plugin methods
-            artifact(tasks.named("sourcesJar"))
-            artifact(tasks.named("javadocJar"))
-            
             // POM metadata
             pom {
                 name.set("Feature Gate Middleware")
